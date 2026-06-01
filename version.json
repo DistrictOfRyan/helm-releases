@@ -1,5 +1,5 @@
 {
-  "version": "1.0.3",
+  "version": "1.0.4",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "Gumroad license verification + in-app setup wizard."
+  "notes": "Version shown in-app; reliability + setup wizard."
 }
