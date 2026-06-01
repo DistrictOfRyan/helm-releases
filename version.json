@@ -1,5 +1,5 @@
 {
-  "version": "1.0.1",
+  "version": "1.0.2",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "Works while Claude Desktop is minimized; licensing + update notices."
+  "notes": "In-app Setup wizard (paste license, connect Telegram). Works while Claude is minimized."
 }
