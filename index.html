@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HELM — Keep your Claude agents working while you step away</title>
+<meta name="description" content="HELM auto-approves the routine prompts that stall your Claude Desktop sessions, escalates the risky ones to your phone, and revives stalled agents — so one person can run a fleet of AI agents.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0B1220; --ink2:#0E1626; --surf:#131C2E; --surf2:#1B2740;
+  --line:#22304A; --txt:#E7ECF3; --sub:#9AA8BE; --mute:#5F6E86;
+  --brass:#E8B14C; --brass-dim:#B08438; --grn:#5BD6A0; --red:#FF6B6B; --teal:#5BC8D6;
+  --mx:50vw; --my:30vh;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--txt);font-family:'IBM Plex Mono',monospace;line-height:1.65;overflow-x:hidden}
+body.cc{cursor:none}
+img{max-width:100%;display:block}
+a{color:inherit}
+.serif{font-family:'Fraunces',serif}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px;position:relative;z-index:2}
+.eyebrow{font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--brass);font-weight:600}
+
+.spotlight{position:fixed;inset:0;pointer-events:none;z-index:1;
+  background:radial-gradient(440px 440px at var(--mx) var(--my), rgba(232,177,76,.10), transparent 70%)}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.cur,.cur-dot{position:fixed;top:0;left:0;pointer-events:none;z-index:1000;border-radius:50%;transform:translate(-50%,-50%);will-change:transform;display:none}
+body.cc .cur,body.cc .cur-dot{display:block}
+.cur{width:32px;height:32px;border:1.5px solid rgba(232,177,76,.7);transition:width .18s,height .18s,background .18s}
+.cur-dot{width:5px;height:5px;background:var(--brass)}
+.cur.hot{width:50px;height:50px;background:rgba(232,177,76,.08)}
+
+nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0}
+.brandrow{display:flex;align-items:center;gap:12px}
+.brandrow .wm{font-family:'Fraunces',serif;font-weight:900;font-size:25px;letter-spacing:.02em}
+nav .links{display:flex;gap:24px;font-size:13px}
+nav .links a{color:var(--sub);text-decoration:none;transition:color .2s}
+nav .links a:hover{color:var(--brass)}
+
+.btn{display:inline-flex;align-items:center;gap:9px;padding:14px 24px;border-radius:11px;font-weight:600;font-size:14px;text-decoration:none;border:1px solid transparent;transition:box-shadow .2s,background .2s,color .2s,transform .12s;will-change:transform}
+.btn-primary{background:var(--brass);color:#1a1205;box-shadow:0 8px 30px rgba(232,177,76,.25)}
+.btn-primary:hover{box-shadow:0 14px 44px rgba(232,177,76,.45)}
+.btn-ghost{border-color:var(--line);color:var(--txt)}
+.btn-ghost:hover{border-color:var(--brass);color:var(--brass)}
+
+.hero{display:grid;grid-template-columns:1.08fr .92fr;gap:36px;align-items:center;padding:36px 0 64px}
+.hero h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(38px,5.6vw,66px);line-height:1.04;letter-spacing:-.02em}
+.hero h1 em{font-style:italic;color:var(--brass)}
+.hero .lead{margin:22px 0 18px;font-size:17px;color:var(--sub);max-width:32em}
+.cta{display:flex;gap:13px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.micro{margin-top:14px;font-size:12.5px;color:var(--mute)}
+.helmstage{display:flex;justify-content:center;align-items:center;position:relative;perspective:900px}
+.helmstage::before{content:"";position:absolute;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(232,177,76,.16),transparent 65%);filter:blur(10px)}
+.tilt{transform-style:preserve-3d;will-change:transform}
+.wheel{width:300px;height:300px;filter:drop-shadow(0 10px 30px rgba(232,177,76,.16))}
+.grabhint{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);white-space:nowrap}
+
+.platforms{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;font-size:12.5px;color:var(--sub);background:rgba(19,28,46,.5)}
+.chip b{color:var(--txt)}
+
+section{padding:64px 0;border-top:1px solid var(--line);position:relative;z-index:2}
+.sec-head{max-width:36em;margin-bottom:40px}
+.sec-head h2{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(27px,3.6vw,40px);line-height:1.1;letter-spacing:-.01em}
+.sec-head p{color:var(--sub);margin-top:14px;font-size:15px}
+
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:linear-gradient(180deg,var(--surf),var(--ink2));border:1px solid var(--line);border-radius:16px;padding:24px;position:relative;overflow:hidden;transition:border-color .25s,transform .2s}
+.card::before{content:"";position:absolute;inset:0;opacity:0;transition:opacity .25s;pointer-events:none;background:radial-gradient(300px 300px at var(--cx,50%) var(--cy,50%), rgba(232,177,76,.15), transparent 60%)}
+.card:hover::before{opacity:1}
+.card:hover{border-color:var(--brass-dim);transform:translateY(-4px)}
+.card .ico{font-size:21px;width:44px;height:44px;display:grid;place-items:center;border-radius:11px;background:rgba(232,177,76,.10);border:1px solid var(--line);margin-bottom:15px;position:relative;z-index:1}
+.card h3{font-family:'Fraunces',serif;font-size:19px;font-weight:600;margin-bottom:8px;position:relative;z-index:1}
+.card p{color:var(--sub);font-size:13.5px;position:relative;z-index:1}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.shot{border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.45);background:var(--ink2)}
+.rules{list-style:none;display:flex;flex-direction:column;gap:16px}
+.rules li{display:flex;gap:13px;align-items:flex-start}
+.rules .x{flex:none;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:13px;font-weight:700}
+.rules .ok{background:rgba(91,214,160,.12);color:var(--grn);border:1px solid rgba(91,214,160,.3)}
+.rules .no{background:rgba(255,107,107,.12);color:var(--red);border:1px solid rgba(255,107,107,.3)}
+.rules b{color:var(--txt)} .rules p{color:var(--sub);font-size:14px}
+
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;counter-reset:s}
+.step{padding:22px;border:1px solid var(--line);border-radius:14px;background:var(--ink2);transition:transform .2s,border-color .2s}
+.step:hover{transform:translateY(-4px);border-color:var(--brass-dim)}
+.step::before{counter-increment:s;content:"0" counter(s);font-family:'Fraunces',serif;font-size:32px;color:var(--brass);font-weight:600;display:block;margin-bottom:8px}
+.step h4{font-size:14px;margin-bottom:6px}.step p{color:var(--sub);font-size:13px}
+
+.price-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center}
+.pricecard{border:1px solid var(--brass-dim);border-radius:20px;padding:34px;background:linear-gradient(180deg,rgba(232,177,76,.07),var(--ink2));position:relative;overflow:hidden}
+.pricecard .tag{position:absolute;top:18px;right:-34px;background:var(--brass);color:#1a1205;font-size:11px;font-weight:700;letter-spacing:.08em;padding:5px 40px;transform:rotate(35deg)}
+.price{font-family:'Fraunces',serif;font-size:58px;font-weight:600;line-height:1}
+.price small{font-size:18px;color:var(--mute)}
+.strike{color:var(--mute);text-decoration:line-through;font-size:20px;margin-left:10px;font-family:'Fraunces',serif}
+.incl{list-style:none;margin:22px 0;display:flex;flex-direction:column;gap:10px}
+.incl li{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--sub)}
+.incl li::before{content:"⚓";color:var(--brass);font-size:13px}
+.incl b{color:var(--txt)}
+
+.faq details{border:1px solid var(--line);border-radius:13px;padding:4px 20px;margin-bottom:12px;background:var(--ink2)}
+.faq summary{cursor:pointer;padding:16px 0;font-weight:600;font-size:15px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";color:var(--brass);font-size:20px}
+.faq details[open] summary::after{content:"–"}
+.faq p{color:var(--sub);font-size:14px;padding:0 0 18px}
+
+.final{text-align:center;padding:84px 0}
+.final h2{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,50px);font-weight:600;letter-spacing:-.02em}
+.final p{color:var(--sub);margin:16px auto 28px;max-width:34em}
+footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mute);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px}
+
+.reveal{opacity:0;transform:translateY(20px)}
+.reveal.in{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.d1{transition-delay:.06s}.d2{transition-delay:.14s}.d3{transition-delay:.22s}
+
+@media(max-width:880px){
+  body.cc{cursor:auto}.cur,.cur-dot,.spotlight{display:none!important}
+  .hero,.split,.price-wrap{grid-template-columns:1fr}.helmstage{order:-1}
+  .grid,.steps{grid-template-columns:1fr 1fr}nav .links{display:none}
+}
+@media(prefers-reduced-motion:reduce){.wheel{transition:none!important}*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="spotlight"></div>
+<div class="cur"></div><div class="cur-dot"></div>
+
+<svg width="0" height="0" style="position:absolute"><defs><g id="helm">
+  <g fill="none" stroke="#E8B14C" stroke-width="5.5" stroke-linecap="round">
+    <circle cx="100" cy="100" r="46"/><circle cx="100" cy="100" r="36" stroke="#B08438" stroke-width="2.5"/>
+    <g><line x1="100" y1="100" x2="100" y2="46"/><line x1="100" y1="100" x2="146.8" y2="127"/><line x1="100" y1="100" x2="53.2" y2="127"/><line x1="100" y1="100" x2="100" y2="154"/><line x1="100" y1="100" x2="53.2" y2="73"/><line x1="100" y1="100" x2="146.8" y2="73"/></g>
+    <g><line x1="100" y1="40" x2="100" y2="22"/><line x1="151.9" y1="130" x2="167.5" y2="139"/><line x1="48.1" y1="130" x2="32.5" y2="139"/><line x1="100" y1="160" x2="100" y2="178"/><line x1="48.1" y1="70" x2="32.5" y2="61"/><line x1="151.9" y1="70" x2="167.5" y2="61"/></g>
+  </g>
+  <g fill="#E8B14C"><circle cx="100" cy="20" r="6"/><circle cx="169" cy="140" r="6"/><circle cx="31" cy="140" r="6"/><circle cx="100" cy="180" r="6"/><circle cx="31" cy="60" r="6"/><circle cx="169" cy="60" r="6"/><circle cx="100" cy="100" r="11"/></g>
+  <circle cx="100" cy="100" r="4.5" fill="#0B1220"/>
+</g></defs></svg>
+
+<div class="wrap">
+  <nav class="reveal">
+    <div class="brandrow"><svg viewBox="0 0 200 200" width="34" height="34"><use href="#helm"/></svg><span class="wm">HELM</span></div>
+    <div class="links"><a href="#features">Features</a><a href="#rules">The rules</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#get">Download</a></div>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <div class="eyebrow reveal">For Claude Desktop power users</div>
+      <h1 class="reveal d1">Keep your Claude agents working <em>while you step away.</em></h1>
+      <p class="lead reveal d2">HELM watches every Claude session on your PC. It approves the routine "Allow" prompts that stall your agents, sends the risky calls to your phone, and revives anything that gets stuck — so one person can run a whole fleet of AI agents without babysitting them.</p>
+      <div class="cta reveal d2">
+        <a class="btn btn-primary mag" href="#get">⚓ Download free</a>
+        <a class="btn btn-ghost" href="#features">See what it does</a>
+      </div>
+      <div class="micro reveal d3">Windows + Claude Desktop · free to start · one-click, no Python · 60-second install</div>
+      <div class="platforms reveal d3">
+        <span class="chip">✓ <b>Claude Desktop</b></span>
+        <span class="chip">✓ <b>Claude Code</b> sessions</span>
+        <span class="chip">⊞ <b>Windows 10 / 11</b></span>
+      </div>
+    </div>
+    <div class="helmstage reveal d2">
+      <div class="tilt" id="tilt"><svg class="wheel" id="wheel" viewBox="0 0 200 200"><use href="#helm"/></svg></div>
+      <span class="grabhint">↤ move your mouse to steer ↦</span>
+    </div>
+  </header>
+</div>
+
+<section id="problem"><div class="wrap">
+  <div class="split">
+    <div class="reveal">
+      <div class="eyebrow">The problem</div>
+      <h2 class="serif" style="font-family:'Fraunces',serif;font-size:34px;font-weight:600;margin:12px 0 16px;line-height:1.1">Your agents stop the second they need you.</h2>
+      <p style="color:var(--sub);font-size:15px">You kick off five Claude sessions, walk away, and come back to find every one of them frozen on "Allow Claude to edit this file?" — waiting on a click you could have made in your sleep. The promise of autonomous agents dies on a permission dialog. HELM is the hand on the wheel that keeps them moving.</p>
+    </div>
+    <div class="shot reveal d1"><img src="app_screenshot.png" alt="The HELM app showing live approvals" onerror="this.parentElement.style.display='none'"></div>
+  </div>
+</div></section>
+
+<section id="features"><div class="wrap">
+  <div class="sec-head reveal"><div class="eyebrow">What it does</div><h2 class="serif">Everything it takes to run unattended.</h2><p>HELM clicks the real buttons in Claude Desktop through Windows accessibility — no screen-scraping, no fake keystrokes, no runaway processes.</p></div>
+  <div class="grid">
+    <div class="card reveal"><div class="ico">⚓</div><h3>Auto-approves the routine</h3><p>Permission prompts like "Allow Claude to edit X" get approved in about four seconds — for the session on screen and the ones running in the background.</p></div>
+    <div class="card reveal d1"><div class="ico">🧭</div><h3>Escalates the risk to your phone</h3><p>Anything irreversible goes to Telegram with one-tap options. You decide; HELM applies it and remembers it for next time.</p></div>
+    <div class="card reveal d2"><div class="ico">↻</div><h3>Revives stalled agents</h3><p>A session that finishes and sits idle gets nudged to continue. Opt-in per session, rate-limited, and never your private chats.</p></div>
+    <div class="card reveal"><div class="ico">📈</div><h3>Learns your judgment</h3><p>It scores its own accuracy against your choices and proposes new rules you accept with a tap. It needs you a little less every week.</p></div>
+    <div class="card reveal d1"><div class="ico">🩺</div><h3>Heals itself</h3><p>A heartbeat + watchdog recover it from hangs, not just crashes. It self-tests every 20 minutes and pings you the moment anything degrades.</p></div>
+    <div class="card reveal d2"><div class="ico">📱</div><h3>Runs from your phone</h3><p>Text it <b>/status</b>, <b>/fleet</b>, <b>/pause</b>, <b>/resume</b>. See every machine and what's waiting, from anywhere. Shrink it to a tiny strip when you don't need the panel.</p></div>
+  </div>
+</div></section>
+
+<section id="rules"><div class="wrap">
+  <div class="sec-head reveal"><div class="eyebrow">The rules</div><h2 class="serif">Trust is the whole product.</h2><p>An early version once spawned background processes and took a machine down. That mistake became a permanent, self-verified rule. Here is exactly what HELM will and won't do.</p></div>
+  <ul class="rules reveal d1">
+    <li><span class="x ok">✓</span><p><b>Auto-approves</b> routine tool permissions — edit a file, run a read-only command, continue a task.</p></li>
+    <li><span class="x ok">✓</span><p><b>Escalates to you</b> any question it isn't confident about, with your options one tap away.</p></li>
+    <li><span class="x no">✕</span><p><b>Never auto-approves the irreversible</b> — deleting, sending email, publishing live, posting to social, or anything involving payment. Those always wait for you.</p></li>
+    <li><span class="x no">✕</span><p><b>Never spawns background AI processes.</b> The pattern that caused the original failure is disabled and continuously verified by a built-in self-test.</p></li>
+    <li><span class="x ok">✓</span><p><b>Acts only on what's real.</b> Every action is a no-op unless the actual on-screen button exists — it can't fire into the wrong window.</p></li>
+    <li><span class="x ok">✓</span><p><b>Stays on your machine.</b> No cloud account, no data leaves your PC. Telegram control is optional and uses your own bot.</p></li>
+  </ul>
+</div></section>
+
+<section id="how"><div class="wrap">
+  <div class="sec-head reveal"><div class="eyebrow">How it works</div><h2 class="serif">Four moves, on a loop.</h2></div>
+  <div class="steps">
+    <div class="step reveal"><h4>Watch</h4><p>Reads every live Claude session and what each is waiting on.</p></div>
+    <div class="step reveal d1"><h4>Decide</h4><p>Routine → approve. Ambiguous → choose smartly. Risky → you.</p></div>
+    <div class="step reveal d2"><h4>Act</h4><p>Clicks the real button. Verifies the session actually moved.</p></div>
+    <div class="step reveal d3"><h4>Report</h4><p>Logs it, learns from it, shows it on your phone.</p></div>
+  </div>
+</div></section>
+
+<section id="pricing"><div class="wrap">
+  <div class="sec-head reveal"><div class="eyebrow">Pricing</div><h2 class="serif">Start free. Upgrade when it's saving you hours.</h2><p>No subscription, no account, no telemetry. The free tier does the thing everyone wants. Pro unlocks the unattended-operator features.</p></div>
+  <div class="price-wrap">
+    <div class="pricecard reveal" style="border-color:var(--line);background:linear-gradient(180deg,var(--surf),var(--ink2))">
+      <div class="eyebrow" style="color:var(--sub)">HELM · Free</div>
+      <div style="margin:14px 0 6px"><span class="price">$0</span></div>
+      <div style="color:var(--mute);font-size:13px">The core, forever. No account.</div>
+      <ul class="incl">
+        <li><b>Auto-approves</b> routine permission &amp; "continue" prompts — on every session.</li>
+        <li><b>Background sessions</b> too, not just the one on screen.</li>
+        <li><b>Self-healing</b> + the live status app.</li>
+        <li><b>Safety rules</b> — never touches the irreversible.</li>
+      </ul>
+      <a class="btn btn-ghost mag" href="#get" style="width:100%;justify-content:center">Download free</a>
+    </div>
+    <div class="pricecard reveal d1">
+      <div class="tag">FOUNDING</div>
+      <div class="eyebrow">HELM · Pro · Lifetime</div>
+      <div style="margin:14px 0 6px"><span class="price">$39<small>&nbsp;once</small></span><span class="strike">$59</span></div>
+      <div style="color:var(--mute);font-size:13px">Founding price for the first 100 buyers.</div>
+      <ul class="incl">
+        <li><b>Everything in Free, plus:</b></li>
+        <li><b>Phone control &amp; escalation</b> — risky calls to your phone, one tap.</li>
+        <li><b>Stall revival</b> — nudges stuck agents to continue.</li>
+        <li><b>Learning</b> — proposes its own rules from your choices.</li>
+        <li><b>Fleet view</b> across machines + smart decisions.</li>
+        <li><b>3 machines</b> · free v1 updates · email support.</li>
+      </ul>
+      <a class="btn btn-primary mag" href="https://williamhunt.gumroad.com/l/helm" style="width:100%;justify-content:center">⚓ Get Pro — $39</a>
+    </div>
+  </div>
+</div></section>
+
+<section id="faq"><div class="wrap">
+  <div class="sec-head reveal"><div class="eyebrow">Questions</div><h2 class="serif">Straight answers.</h2></div>
+  <div class="faq reveal d1">
+    <details open><summary>Which AIs does it work with?</summary><p>HELM is built specifically for <b>Claude Desktop on Windows</b> (including Claude Code sessions run inside it). It drives Claude's real interface, so it does not work with ChatGPT, Gemini, or other assistants today. If you live in Claude all day, it's built for exactly you.</p></details>
+    <details><summary>Do I need to be a developer to install it?</summary><p>No. The Windows download is a one-click <b>HELM.exe</b> — no Python, no setup wizard. Unzip it and double-click. You only need Windows 10/11 and Claude Desktop. (A source build is also available for developers who want to tinker.)</p></details>
+    <details><summary>What's the difference between Free and Pro?</summary><p><b>Free</b> auto-approves the routine prompts that stall your sessions — the thing you came for. <b>Pro</b> ($39 once) adds the unattended-operator features: phone control &amp; escalation, stall revival, learning that proposes its own rules, multi-machine fleet view, and smart decisions. Upgrade right inside the app.</p></details>
+    <details><summary>Is it safe? Could it approve something destructive?</summary><p>No. HELM never auto-approves irreversible actions — deleting, sending email, publishing, posting, or anything with payment always waits for your explicit approval. It only ever clicks a button that's actually on screen, and a built-in self-test verifies its safety rules every 20 minutes.</p></details>
+    <details><summary>Does my data leave my computer?</summary><p>No. HELM runs entirely on your PC. There's no cloud account and no telemetry. The optional phone control uses a Telegram bot you create and own.</p></details>
+    <details><summary>Does the phone control cost extra?</summary><p>No — it's included. You connect your own free Telegram bot; HELM talks to it directly. Optional smart decision-making can use a cheap third-party model with your own key.</p></details>
+    <details><summary>What if it doesn't work for me?</summary><p>Email me within 14 days and I'll make it right or refund you. It's a tool meant to save you hours; if it doesn't, you shouldn't pay for it.</p></details>
+  </div>
+</div></section>
+
+<div class="wrap"><div class="final" id="get">
+  <svg viewBox="0 0 200 200" width="74" height="74" id="wheel2" style="margin:0 auto 16px"><use href="#helm"/></svg>
+  <h2 class="serif">Take the helm.</h2>
+  <p>Download it, double-click <b>HELM.exe</b>, and close your laptop knowing the work keeps moving. No Python, no setup wizard — it just runs.</p>
+  <div class="cta" style="justify-content:center">
+    <a class="btn btn-primary mag" href="https://github.com/DistrictOfRyan/helm-releases/releases/download/v1.0.1/HELM-Windows-v1.0.zip">⚓ Download for Windows (free)</a>
+    <a class="btn btn-ghost" href="HELM-v1.0.zip" download>Source (.zip, for developers)</a>
+  </div>
+  <p style="color:var(--mute);font-size:12px;margin-top:18px">Windows 10/11 · Claude Desktop required · one-click .exe · ~37 MB · Free tier — upgrade to Pro in-app</p>
+</div></div>
+
+<div class="wrap"><footer><span>HELM — keep your Claude agents working.</span><span><a href="support.md" style="color:var(--sub);text-decoration:none">Support &amp; FAQ</a> · Built by William Hunt · districtofryan</span></footer></div>
+
+<script>
+const lerp=(a,b,t)=>a+(b-a)*t;
+let mx=innerWidth/2,my=innerHeight/2,cx=mx,cy=my,dx=mx,dy=my,wt=0,wr=0,idle=0;
+const cur=document.querySelector('.cur'),dot=document.querySelector('.cur-dot');
+const wheel=document.getElementById('wheel'),wheel2=document.getElementById('wheel2'),tilt=document.getElementById('tilt');
+const root=document.documentElement, mags=[...document.querySelectorAll('.mag')];
+// enable custom cursor only on fine pointers (desktop) — progressive enhancement
+if(matchMedia('(pointer:fine)').matches && innerWidth>880){document.body.classList.add('cc');}
+addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  root.style.setProperty('--mx',mx+'px');root.style.setProperty('--my',my+'px');
+  if(wheel){const r=wheel.getBoundingClientRect();wt=Math.atan2(my-(r.top+r.height/2),mx-(r.left+r.width/2))*180/Math.PI;}
+  mags.forEach(b=>{const r=b.getBoundingClientRect();const ddx=mx-(r.left+r.width/2),ddy=my-(r.top+r.height/2);
+    if(Math.abs(ddx)<r.width*1.1&&Math.abs(ddy)<r.height*2.2){b.style.transform='translate('+ddx*.22+'px,'+ddy*.28+'px)';}else b.style.transform='';});
+});
+document.querySelectorAll('a,.card,.step,.btn,summary').forEach(el=>{el.addEventListener('mouseenter',()=>cur.classList.add('hot'));el.addEventListener('mouseleave',()=>cur.classList.remove('hot'));});
+document.querySelectorAll('.card').forEach(c=>c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();c.style.setProperty('--cx',(e.clientX-r.left)+'px');c.style.setProperty('--cy',(e.clientY-r.top)+'px');}));
+function frame(){
+  cx=lerp(cx,mx,.18);cy=lerp(cy,my,.18);dx=lerp(dx,mx,.5);dy=lerp(dy,my,.5);
+  cur.style.transform='translate('+cx+'px,'+cy+'px) translate(-50%,-50%)';
+  dot.style.transform='translate('+dx+'px,'+dy+'px) translate(-50%,-50%)';
+  idle+=0.12;let target=wt+idle;let d=((target-wr+540)%360)-180;wr+=d*0.06;
+  if(wheel)wheel.style.transform='rotate('+wr+'deg)';
+  if(wheel2)wheel2.style.transform='rotate('+(wr*.6)+'deg)';
+  if(tilt){tilt.style.transform='rotateX('+(-(my/innerHeight-.5)*14)+'deg) rotateY('+((mx/innerWidth-.5)*14)+'deg)';}
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+const io=new IntersectionObserver((es)=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
