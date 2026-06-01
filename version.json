@@ -1,5 +1,5 @@
 {
-  "version": "1.0.10",
+  "version": "1.0.11",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "Reliability under load: HELM now waits for slow-rendering background popups before giving up, so it auto-answers more and escalates less. Recommended update."
+  "notes": "Fix: the built-in safety self-test now passes in the packaged app (it previously false-reported a failure in the compiled build). Recommended update."
 }
