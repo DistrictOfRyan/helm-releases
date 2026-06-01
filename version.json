@@ -1,5 +1,5 @@
 {
-  "version": "1.0.8",
+  "version": "1.0.9",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "Loop-breaker: a popup HELM cannot answer no longer stalls every other session - after a few tries it escalates to your phone and moves on. Recommended update."
+  "notes": "Anti-spam: stuck-session alerts are now consolidated into one ping per 30 min instead of one per session. Recommended update."
 }
