@@ -1,5 +1,5 @@
 {
-  "version": "1.0.2",
+  "version": "1.0.3",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "In-app Setup wizard (paste license, connect Telegram). Works while Claude is minimized."
+  "notes": "Gumroad license verification + in-app setup wizard."
 }
