@@ -1,5 +1,5 @@
 {
-  "version": "1.0.7",
+  "version": "1.0.8",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "No more silent failures - if HELM cannot auto-approve a dialog after retries, it now pings your phone so you know a session is waiting. Recommended update."
+  "notes": "Loop-breaker: a popup HELM cannot answer no longer stalls every other session - after a few tries it escalates to your phone and moves on. Recommended update."
 }
