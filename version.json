@@ -1,5 +1,5 @@
 {
-  "version": "1.0.6",
+  "version": "1.0.7",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "Reliability fix: background-session permission dialogs no longer get stuck when many sessions need approval at once (focus-independent approval). Recommended update."
+  "notes": "No more silent failures - if HELM cannot auto-approve a dialog after retries, it now pings your phone so you know a session is waiting. Recommended update."
 }
