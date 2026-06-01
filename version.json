@@ -1,5 +1,5 @@
 {
-  "version": "1.0.5",
+  "version": "1.0.6",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "Critical fix: Pro activation now works (Gumroad license verify uses product_id). If you bought Pro and could not activate, update and re-enter your key."
+  "notes": "Reliability fix: background-session permission dialogs no longer get stuck when many sessions need approval at once (focus-independent approval). Recommended update."
 }
