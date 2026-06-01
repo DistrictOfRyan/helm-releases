@@ -1,5 +1,5 @@
 {
-  "version": "1.0.9",
+  "version": "1.0.10",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "Anti-spam: stuck-session alerts are now consolidated into one ping per 30 min instead of one per session. Recommended update."
+  "notes": "Reliability under load: HELM now waits for slow-rendering background popups before giving up, so it auto-answers more and escalates less. Recommended update."
 }
