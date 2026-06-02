@@ -137,6 +137,27 @@ footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mute);font-si
   .grid,.steps{grid-template-columns:1fr 1fr}nav .links{display:none}
 }
 @media(prefers-reduced-motion:reduce){.wheel{transition:none!important}*{scroll-behavior:auto}}
+#demo .hdemo{max-width:760px;margin:0 auto;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,var(--surf),var(--ink2));overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+#demo .hd-bar{display:flex;align-items:center;gap:8px;padding:13px 18px;border-bottom:1px solid var(--line);background:rgba(11,18,32,.5)}
+#demo .hd-dot{width:11px;height:11px;border-radius:50%}
+#demo .hd-title{margin-left:8px;font-size:12.5px;color:var(--sub)}
+#demo .hd-helm{margin-left:auto;font-size:12px;color:var(--brass);font-weight:600}
+#demo .hd-row{display:grid;grid-template-columns:150px 1fr;align-items:center;gap:14px;padding:16px 18px;border-bottom:1px solid rgba(34,48,74,.5)}
+#demo .hd-row:last-child{border-bottom:none}
+#demo .hd-name{font-size:13px;color:var(--txt);font-weight:600;grid-column:1;grid-row:1}
+#demo .hd-st{font-size:13.5px;grid-column:2;grid-row:1;display:inline-flex;align-items:center;gap:9px}
+#demo .hd-st::before{content:"";width:8px;height:8px;border-radius:50%;flex:none}
+#demo .hd-st.wait{color:var(--brass)}#demo .hd-st.wait::before{background:var(--brass);animation:hdpulse 1.4s infinite}
+#demo .hd-st.wait.risk{color:var(--red)}#demo .hd-st.wait.risk::before{background:var(--red);animation:hdpulse 1.4s infinite}
+#demo .hd-st.ok{color:var(--grn)}#demo .hd-st.ok::before{background:var(--grn)}
+#demo .hd-st.phone{color:var(--teal)}#demo .hd-st.phone::before{background:var(--teal)}
+@keyframes hdpulse{0%{box-shadow:0 0 0 0 rgba(232,177,76,.45)}70%{box-shadow:0 0 0 7px rgba(232,177,76,0)}100%{box-shadow:0 0 0 0 rgba(232,177,76,0)}}
+#demo .hd-st.wait{animation:hdWait 6s calc(var(--i)*0.7s) infinite}
+#demo .hd-st.ok,#demo .hd-st.phone{animation:hdDone 6s calc(var(--i)*0.7s) infinite}
+@keyframes hdWait{0%,38%{opacity:1}47%,95%{opacity:0}100%{opacity:1}}
+@keyframes hdDone{0%,38%{opacity:0}47%,95%{opacity:1}100%{opacity:0}}
+@media(prefers-reduced-motion:reduce){#demo .hd-st{animation:none!important}#demo .hd-st.wait{opacity:1}#demo .hd-st.ok,#demo .hd-st.phone{opacity:0}}
+@media(max-width:600px){#demo .hd-row{grid-template-columns:1fr}#demo .hd-name{grid-row:1}#demo .hd-st{grid-column:1;grid-row:2}}
 </style>
 </head>
 <body>
@@ -181,6 +202,22 @@ footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mute);font-si
     </div>
   </header>
 </div>
+
+<section id="demo"><div class="wrap">
+  <div class="sec-head reveal" style="text-align:center;max-width:40em;margin:0 auto 34px">
+    <div class="eyebrow">See it work</div>
+    <h2 class="serif">Frozen sessions, moving again — on their own.</h2>
+    <p style="margin-left:auto;margin-right:auto">This is HELM running. The routine prompts get approved in seconds. The irreversible always waits for you.</p>
+  </div>
+  <div class="hdemo reveal d1">
+    <div class="hd-bar"><span class="hd-dot" style="background:#FF6B6B"></span><span class="hd-dot" style="background:#E8B14C"></span><span class="hd-dot" style="background:#5BD6A0"></span><span class="hd-title">Claude Desktop &middot; 4 agents</span><span class="hd-helm">&#9875; HELM watching</span></div>
+    <div class="hd-row" style="--i:0"><span class="hd-name">auth-refactor</span><span class="hd-st wait">Allow Claude to edit auth.ts?</span><span class="hd-st ok">Approved &middot; working</span></div>
+    <div class="hd-row" style="--i:1"><span class="hd-name">scrape-pipeline</span><span class="hd-st wait">Allow Claude to run build.sh?</span><span class="hd-st ok">Approved &middot; working</span></div>
+    <div class="hd-row" style="--i:2"><span class="hd-name">prod-deploy</span><span class="hd-st wait risk">Delete the production table?</span><span class="hd-st phone">&rarr; sent to your phone</span></div>
+    <div class="hd-row" style="--i:3"><span class="hd-name">docs-writer</span><span class="hd-st wait">Allow Claude to edit README?</span><span class="hd-st ok">Approved &middot; working</span></div>
+  </div>
+  <p style="text-align:center;color:var(--mute);font-size:12.5px;margin-top:16px">Routine prompts: approved in ~4s, even minimized. Delete &middot; send &middot; publish &middot; pay &rarr; always you.</p>
+</div></section>
 
 <section id="problem"><div class="wrap">
   <div class="split">
