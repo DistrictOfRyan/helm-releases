@@ -1,5 +1,5 @@
 {
-  "version": "1.0.12",
+  "version": "1.0.13",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "New (opt-in): value counter (/stats), observe/dry-run mode, and your-own allow/ask/deny policy rules. Default behavior unchanged."
+  "notes": "New: /share makes a post-ready value card showing how much HELM saved you. Screenshot and share."
 }
