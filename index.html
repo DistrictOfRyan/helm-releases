@@ -154,8 +154,8 @@ footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mute);font-si
 @keyframes hdpulse{0%{box-shadow:0 0 0 0 rgba(232,177,76,.45)}70%{box-shadow:0 0 0 7px rgba(232,177,76,0)}100%{box-shadow:0 0 0 0 rgba(232,177,76,0)}}
 #demo .hd-st.wait{animation:hdWait 6s calc(var(--i)*0.7s) infinite}
 #demo .hd-st.ok,#demo .hd-st.phone{animation:hdDone 6s calc(var(--i)*0.7s) infinite}
-@keyframes hdWait{0%,38%{opacity:1}47%,95%{opacity:0}100%{opacity:1}}
-@keyframes hdDone{0%,38%{opacity:0}47%,95%{opacity:1}100%{opacity:0}}
+@keyframes hdWait{0%,40%{opacity:1}44%,95%{opacity:0}100%{opacity:1}}
+@keyframes hdDone{0%,46%{opacity:0}50%,95%{opacity:1}100%{opacity:0}}
 @media(prefers-reduced-motion:reduce){#demo .hd-st{animation:none!important}#demo .hd-st.wait{opacity:1}#demo .hd-st.ok,#demo .hd-st.phone{opacity:0}}
 @media(max-width:600px){#demo .hd-row{grid-template-columns:1fr}#demo .hd-name{grid-row:1}#demo .hd-st{grid-column:1;grid-row:2}}
 </style>
