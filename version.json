@@ -1,5 +1,5 @@
 {
-  "version": "1.0.11",
+  "version": "1.0.12",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "Fix: the built-in safety self-test now passes in the packaged app (it previously false-reported a failure in the compiled build). Recommended update."
+  "notes": "New (opt-in): value counter (/stats), observe/dry-run mode, and your-own allow/ask/deny policy rules. Default behavior unchanged."
 }
