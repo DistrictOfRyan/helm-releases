@@ -1,5 +1,5 @@
 {
-  "version": "1.0.13",
+  "version": "1.0.14",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "New: /share makes a post-ready value card showing how much HELM saved you. Screenshot and share."
+  "notes": "Fixes focus-stealing while you type (HELM now waits until you are idle about 25 seconds before draining approvals) and the taskbar now shows the HELM wheel icon, not the Python icon."
 }
