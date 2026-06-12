@@ -1,5 +1,5 @@
 {
-  "version": "1.0.14",
+  "version": "1.0.15",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "Fixes focus-stealing while you type (HELM now waits until you are idle about 25 seconds before draining approvals) and the taskbar now shows the HELM wheel icon, not the Python icon."
+  "notes": "Reliability fix: HELM now reliably clicks Allow on every machine. Fixes installs that listed your sessions but never approved anything, recognizes the Allow button even if Claude Desktop renames it, and now records exactly why whenever it cannot approve a prompt."
 }
