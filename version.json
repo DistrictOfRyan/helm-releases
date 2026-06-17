@@ -1,5 +1,5 @@
 {
-  "version": "1.0.15",
+  "version": "1.0.16",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "Reliability fix: HELM now reliably clicks Allow on every machine. Fixes installs that listed your sessions but never approved anything, recognizes the Allow button even if Claude Desktop renames it, and now records exactly why whenever it cannot approve a prompt."
+  "notes": "Reliability fix: HELM no longer stops approving after running for a while. Its button-clicking engine is driven from several background threads at once; without the right per-thread setup that shared engine could wedge, after which HELM listed your sessions but silently never clicked Allow. HELM now serializes all UI-automation, initializes each thread correctly, and self-heals by rebuilding the engine and retrying if it ever fails."
 }
