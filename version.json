@@ -1,5 +1,5 @@
 {
-  "version": "1.0.17",
+  "version": "1.0.18",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "The close button now actually closes HELM. Before, clicking the X just killed the tray window and HELM's watchdog relaunched it a few seconds later, so it seemed impossible to close. Now closing asks you to confirm, then stops the watchdog and exits for real. Reopening HELM (Start HELM, or your next login) re-enables it."
+  "notes": "Fixes a case where quitting HELM left it impossible to reopen. Quitting set a STOP flag that wasn't cleared, so the next launch (including at login) saw the flag and exited immediately. HELM now removes that flag once it has stopped, so reopening works normally from any launcher or at startup. Recommended for anyone on 1.0.17."
 }
