@@ -1,5 +1,5 @@
 {
-  "version": "1.0.16",
+  "version": "1.0.17",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "Reliability fix: HELM no longer stops approving after running for a while. Its button-clicking engine is driven from several background threads at once; without the right per-thread setup that shared engine could wedge, after which HELM listed your sessions but silently never clicked Allow. HELM now serializes all UI-automation, initializes each thread correctly, and self-heals by rebuilding the engine and retrying if it ever fails."
+  "notes": "The close button now actually closes HELM. Before, clicking the X just killed the tray window and HELM's watchdog relaunched it a few seconds later, so it seemed impossible to close. Now closing asks you to confirm, then stops the watchdog and exits for real. Reopening HELM (Start HELM, or your next login) re-enables it."
 }
