@@ -1,5 +1,5 @@
 {
-  "version": "1.0.18",
+  "version": "1.0.19",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "Fixes a case where quitting HELM left it impossible to reopen. Quitting set a STOP flag that wasn't cleared, so the next launch (including at login) saw the flag and exited immediately. HELM now removes that flag once it has stopped, so reopening works normally from any launcher or at startup. Recommended for anyone on 1.0.17."
+  "notes": "Fixes HELM going silent after a Windows update. Windows occasionally updates the UI-automation component HELM uses to click Allow, which invalidated HELM's cached copy so approvals silently failed (HELM listed your sessions but never clicked Allow). HELM now detects that exact failure, rebuilds its cached copy against the updated component automatically, and logs the recovery. No reinstall or restart needed. Recommended for everyone."
 }
