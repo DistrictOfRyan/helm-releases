@@ -1,5 +1,5 @@
 {
-  "version": "1.0.19",
-  "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "Fixes HELM going silent after a Windows update. Windows occasionally updates the UI-automation component HELM uses to click Allow, which invalidated HELM's cached copy so approvals silently failed (HELM listed your sessions but never clicked Allow). HELM now detects that exact failure, rebuilds its cached copy against the updated component automatically, and logs the recovery. No reinstall or restart needed. Recommended for everyone."
+  "version": "1.0.20",
+  "url": "https://github.com/DistrictOfRyan/helm-releases/releases/tag/v1.0.20",
+  "notes": "Fixes HELM window opening fullscreen instead of the compact top-right widget on single-monitor setups. A DPI manifest conflict in the Windows exe caused the window to render at screen size rather than the intended 400x470 widget. Recommended for all single-monitor users."
 }
