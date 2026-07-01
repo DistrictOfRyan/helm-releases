@@ -1,5 +1,5 @@
 {
-  "version": "1.0.20",
-  "url": "https://github.com/DistrictOfRyan/helm-releases/releases/tag/v1.0.20",
-  "notes": "Fixes HELM window opening fullscreen instead of the compact top-right widget on single-monitor setups. A DPI manifest conflict in the Windows exe caused the window to render at screen size rather than the intended 400x470 widget. Recommended for all single-monitor users."
+  "version": "1.0.21",
+  "url": "https://github.com/DistrictOfRyan/helm-releases/releases/tag/v1.0.21",
+  "notes": "Faster, more reliable approvals. HELM now approves prompts waiting in your background sessions while you work in another app, then hands your window right back (before, it only clicked the session on screen). It stopped mislabeling busy sessions (like ones driving a browser) as \"waiting\" when they are actually running. Finding the Allow button went from about 30 seconds to about 2, which also stopped HELM restarting itself every couple of minutes on busy setups, and it now reaches sessions the sidebar marks \"Awaiting input.\""
 }
