@@ -1,5 +1,5 @@
 {
-  "version": "1.0.23",
+  "version": "1.0.24",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "Keep-Going mode: for a big thread that keeps stopping, flip 'Keep going' on and HELM drives it back to work every time it stops, silently and with no give-up cap, until the thread says it genuinely cannot go further. The session panel now mirrors your Claude Desktop sidebar, so idle and cloud sessions show up instead of going missing. Plus a fix for a false 'NEEDS APPROVAL' flag on sessions that were actually thinking or running a long tool."
+  "notes": "HELM can see the Allow button again. A Claude Desktop update stopped exposing its window contents to the accessibility layer HELM uses to find buttons, so HELM listed your sessions but never clicked Allow. If HELM has felt dead since early July, this is why. Also fixes auto-answers (Claude renamed Submit to \"Submit Enter\" and now runs an option's label and description together), makes the self-test report blindness as a hard failure instead of saying OK, stops clicks going to the wrong window, and excludes pinned sessions properly."
 }
