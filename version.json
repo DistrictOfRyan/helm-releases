@@ -1,5 +1,5 @@
 {
-  "version": "1.0.24",
+  "version": "1.0.25",
   "url": "https://github.com/DistrictOfRyan/helm-releases/releases/latest",
-  "notes": "HELM can see the Allow button again. A Claude Desktop update stopped exposing its window contents to the accessibility layer HELM uses to find buttons, so HELM listed your sessions but never clicked Allow. If HELM has felt dead since early July, this is why. Also fixes auto-answers (Claude renamed Submit to \"Submit Enter\" and now runs an option's label and description together), makes the self-test report blindness as a hard failure instead of saying OK, stops clicks going to the wrong window, and excludes pinned sessions properly."
+  "notes": "Approvals actually work now - update from 1.0.24. 1.0.24 restored HELM's ability to SEE the conversation but it still clicked the wrong thing: Claude labels the real button \"Allow once 2 Ctrl +Enter\" and separately exposes the dialog's question as a clickable element, so HELM clicked the question, which does nothing, and reported success anyway. If you installed 1.0.24 and HELM still never approved anything, this is why. Buttons are now matched by their real label whatever shortcut text is attached, a question is never mistaken for a button (nor is a tool-call entry in your transcript), and every approval is VERIFIED - HELM confirms the dialog actually closed before reporting it. Also: HELM no longer types into a session while you are using it, and it stops reporting phantom approvals for background runs that have no window."
 }
